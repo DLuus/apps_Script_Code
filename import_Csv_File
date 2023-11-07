@@ -1,0 +1,47 @@
+function importCSVData() {
+  // Define the folder name, file name, Google Sheet URL, and tab name
+  var folderName = "Your Folder Name";
+  var csvFileName = "Your CSV File Name"; // Name of the CSV file
+  var spreadsheetUrl = 'YOUR_SPREADSHEET_URL';
+  var tabName = 'Your Tab Name'; // Name of the target tab (worksheet)
+
+  // Get the folder by name
+  var folder = DriveApp.getFoldersByName(folderName).next();
+
+  // Search for the CSV file by name in the folder
+  var files = folder.getFilesByName(csvFileName);
+  var csvFile = null;
+
+  if (files.hasNext()) {
+    csvFile = files.next();
+  }
+
+  // Check if a CSV file with the specified name was found
+  if (csvFile) {
+    // Read the CSV content
+    var csvContent = csvFile.getBlob().getDataAsString();
+
+    // Parse the CSV content into a 2D array
+    var csvData = Utilities.parseCsv(csvContent);
+
+    // Get the target Google Sheet by its URL
+    var spreadsheet = SpreadsheetApp.openByUrl(spreadsheetUrl);
+
+    // Get the specific tab (worksheet) by name
+    var sheet = spreadsheet.getSheetByName(tabName);
+
+    if (sheet) {
+      // Clear existing data in the sheet (optional)
+      sheet.clear();
+
+      // Write the CSV data to the specific tab in the Google Sheet
+      sheet.getRange(1, 1, csvData.length, csvData[0].length).setValues(csvData);
+
+      Logger.log("CSV data has been imported to the specified tab in the Google Sheet.");
+    } else {
+      Logger.log("The specified tab does not exist in the Google Sheet.");
+    }
+  } else {
+    Logger.log("No CSV file with the specified name found in the folder.");
+  }
+}
