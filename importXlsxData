@@ -18,17 +18,6 @@ function importXLSXData() {
 
   // Check if an XLSX file with the specified name was found
   if (xlsxFile) {
-    // Read the XLSX content and convert it to Google Sheets format
-    var blob = xlsxFile.getBlob();
-    var resource = {
-      title: xlsxFileName,
-      mimeType: MimeType.MICROSOFT_EXCEL
-    };
-
-    var driveFile = Drive.Files.insert(resource, blob, {
-      convert: true
-    });
-
     // Get the target Google Sheet by its URL
     var spreadsheet = SpreadsheetApp.openByUrl(spreadsheetUrl);
 
@@ -39,12 +28,16 @@ function importXLSXData() {
       // Clear existing data in the sheet (optional)
       sheet.clear();
 
-      // Copy the data from the converted Google Sheet to the target tab
-      var copiedSheet = driveFile.getBlob().getDataAsString();
-      sheet.getRange(1, 1).setValue(copiedSheet);
+      // Import the XLSX data into the specified tab
+      var blob = xlsxFile.getBlob();
+      var data = blob.getDataAsString();
+      var resource = {
+        valueInputOption: "RAW",
+      };
 
-      // Delete the temporary Google Sheet
-      Drive.Files.remove(driveFile.id);
+      var values = Utilities.parseCsv(data, "\t"); // Assumes tab-delimited data
+
+      sheet.getRange(1, 1, values.length, values[0].length).setValues(values);
 
       Logger.log("XLSX data has been imported to the specified tab in the Google Sheet.");
     } else {
