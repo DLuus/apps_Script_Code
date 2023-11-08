@@ -52,3 +52,4 @@ function importXLSXData() {
     Logger.log("No XLSX file with the specified name found in the folder.");
   }
 }
+
