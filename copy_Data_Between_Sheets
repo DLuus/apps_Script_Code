@@ -1,0 +1,24 @@
+function copyDataBetweenSheets() {
+  // Replace these URLs with the actual URLs of your sheets
+  var sourceSheetURL = 'SOURCE_SHEET_URL_HERE';
+  var targetSheetURL = 'TARGET_SHEET_URL_HERE';
+  
+  // Replace these tab names with the actual tab names
+  var sourceTabName = 'SOURCE_TAB_NAME';
+  var targetTabName = 'TARGET_TAB_NAME';
+
+  var sourceSpreadsheet = SpreadsheetApp.openByUrl(sourceSheetURL);
+  var targetSpreadsheet = SpreadsheetApp.openByUrl(targetSheetURL);
+
+  var sourceSheet = sourceSpreadsheet.getSheetByName(sourceTabName);
+  var targetSheet = targetSpreadsheet.getSheetByName(targetTabName);
+
+  if (sourceSheet && targetSheet) {
+    var sourceData = sourceSheet.getDataRange().getValues();
+    targetSheet.clearContents(); // Clear the target sheet before pasting
+    targetSheet.getRange(1, 1, sourceData.length, sourceData[0].length).setValues(sourceData);
+    Logger.log('Data copied from ' + sourceTabName + ' in ' + sourceSheet.getName() + ' to ' + targetTabName + ' in ' + targetSheet.getName());
+  } else {
+    Logger.log('Sheet or tab not found. Please check the URLs and tab names.');
+  }
+}
