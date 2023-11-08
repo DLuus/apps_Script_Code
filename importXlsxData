@@ -30,14 +30,19 @@ function importXLSXData() {
 
       // Import the XLSX data into the specified tab
       var blob = xlsxFile.getBlob();
-      var data = blob.getDataAsString();
-      var resource = {
-        valueInputOption: "RAW",
-      };
+      var data = blob.getBytes();
+      var workbook = XLSX.read(data, { type: "array" });
 
-      var values = Utilities.parseCsv(data, "\t"); // Assumes tab-delimited data
+      // Assuming the first sheet in the XLSX file
+      var firstSheetName = workbook.SheetNames[0];
+      var worksheet = workbook.Sheets[firstSheetName];
 
-      sheet.getRange(1, 1, values.length, values[0].length).setValues(values);
+      var rangeData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      var numRows = rangeData.length;
+      var numCols = rangeData[0].length;
+
+      // Write the data to the Google Sheet
+      sheet.getRange(1, 1, numRows, numCols).setValues(rangeData);
 
       Logger.log("XLSX data has been imported to the specified tab in the Google Sheet.");
     } else {
