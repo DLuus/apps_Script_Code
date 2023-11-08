@@ -1,0 +1,56 @@
+function importXLSXData() {
+  // Define the folder name, file name, Google Sheet URL, and tab name
+  var folderName = "Your Folder Name";
+  var xlsxFileName = "Your XLSX File Name"; // Name of the XLSX file
+  var spreadsheetUrl = 'YOUR_SPREADSHEET_URL';
+  var tabName = 'Your Tab Name'; // Name of the target tab (worksheet)
+
+  // Get the folder by name
+  var folder = DriveApp.getFoldersByName(folderName).next();
+
+  // Search for the XLSX file by name in the folder
+  var files = folder.getFilesByName(xlsxFileName);
+  var xlsxFile = null;
+
+  if (files.hasNext()) {
+    xlsxFile = files.next();
+  }
+
+  // Check if an XLSX file with the specified name was found
+  if (xlsxFile) {
+    // Read the XLSX content and convert it to Google Sheets format
+    var blob = xlsxFile.getBlob();
+    var resource = {
+      title: xlsxFileName,
+      mimeType: MimeType.MICROSOFT_EXCEL
+    };
+
+    var driveFile = Drive.Files.insert(resource, blob, {
+      convert: true
+    });
+
+    // Get the target Google Sheet by its URL
+    var spreadsheet = SpreadsheetApp.openByUrl(spreadsheetUrl);
+
+    // Get the specific tab (worksheet) by name
+    var sheet = spreadsheet.getSheetByName(tabName);
+
+    if (sheet) {
+      // Clear existing data in the sheet (optional)
+      sheet.clear();
+
+      // Copy the data from the converted Google Sheet to the target tab
+      var copiedSheet = driveFile.getBlob().getDataAsString();
+      sheet.getRange(1, 1).setValue(copiedSheet);
+
+      // Delete the temporary Google Sheet
+      Drive.Files.remove(driveFile.id);
+
+      Logger.log("XLSX data has been imported to the specified tab in the Google Sheet.");
+    } else {
+      Logger.log("The specified tab does not exist in the Google Sheet.");
+    }
+  } else {
+    Logger.log("No XLSX file with the specified name found in the folder.");
+  }
+}
