@@ -1,0 +1,19 @@
+function menuUi () {
+
+var ui = SpreadsheetApp.getUi();
+
+// Add Menues to your sheet
+var menuItem1 = ui.createMenu( "Menu name");
+
+// Add items in your drop down menu. Note: You can add as many items as you want
+menuItem1.addItem("Item name");
+
+menuItem1.addToUi();
+
+}
+
+function onOpen() {
+
+menuUi();
+
+}
