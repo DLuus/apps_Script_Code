@@ -1,0 +1,43 @@
+function logEntry() {
+  // Replace 'YOUR_SPREADSHEET_URL' with the URL of your spreadsheet
+  var spreadsheetUrl = 'YOUR_SPREADSHEET_URL';
+
+  // Replace 'TargetSheet' with the name of the sheet where you want to log entries
+  var sheetName = 'TargetSheet';
+
+  // Replace 'A1' with the target cell where you want to log entries
+  var targetCell = 'A1';
+
+  // Get the spreadsheet ID from the URL
+  var spreadsheetId = getSpreadsheetIdFromUrl(spreadsheetUrl);
+
+  if (spreadsheetId) {
+    // Get the current date and time
+    var timestamp = new Date();
+
+    // Create the log entry
+    var logEntry = 'Log entry created on ' + timestamp;
+
+    // Call the function to write the log entry to the specified sheet and cell
+    writeToSheet(spreadsheetId, sheetName, targetCell, logEntry);
+  } else {
+    Logger.log('Invalid spreadsheet URL');
+  }
+}
+
+function writeToSheet(spreadsheetId, sheetName, targetCell, value) {
+  // Open the spreadsheet
+  var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+
+  // Get the target sheet
+  var sheet = spreadsheet.getSheetByName(sheetName);
+
+  // Get the range of the target cell
+  var range = sheet.getRange(targetCell);
+
+  // Set the value in the target cell
+  range.setValue(value);
+
+  // Log that the entry has been created
+  Logger.log('Log entry created: ' + value);
+}
