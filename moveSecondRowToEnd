@@ -1,0 +1,25 @@
+function moveSecondRowToEnd() {
+  // Replace 'YOUR_SPREADSHEET_ID' with the actual ID of your spreadsheet
+  var spreadsheetId = 'YOUR_SPREADSHEET_ID';
+
+  // Replace 'TargetSheet' with the name of the sheet where you want to perform the operation
+  var sheetName = 'TargetSheet';
+
+  // Open the spreadsheet
+  var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+
+  // Get the target sheet
+  var sheet = spreadsheet.getSheetByName(sheetName);
+
+  // Get the data from the second row
+  var dataToMove = sheet.getRange(2, 1, 1, sheet.getLastColumn()).getValues();
+
+  // Find the last row with content in the sheet
+  var lastRow = sheet.getLastRow();
+
+  // Append the data after the last row
+  sheet.getRange(lastRow + 1, 1, 1, sheet.getLastColumn()).setValues(dataToMove);
+
+  // Log that the operation has been completed
+  Logger.log('Second row moved to the end of the sheet.');
+}
