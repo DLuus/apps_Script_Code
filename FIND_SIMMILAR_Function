@@ -1,11 +1,11 @@
 /**
- * Custom function to find similar entries in a specified column on a specific sheet tab.
+ * Custom function to find rows with values similar to a specified term in a specific column on a specific sheet tab.
  *
  * @param {string} searchTerm - The term to search for similarities.
  * @param {string} sheetName - The name of the sheet tab to search.
  * @param {string} searchRange - The range to search for similarities (e.g., "B3:B100").
  * @param {number} targetColumn - The column to search for similarities (1-based index).
- * @return {array} - The list of values similar to the search term.
+ * @return {array} - The list of rows with values similar to the search term.
  * @customfunction
  */
 function FIND_SIMILAR(searchTerm, sheetName, searchRange, targetColumn) {
@@ -25,15 +25,15 @@ function FIND_SIMILAR(searchTerm, sheetName, searchRange, targetColumn) {
     }
 
     var data = range.getValues();
-    var similarValues = [];
+    var similarRows = [];
 
     for (var i = 0; i < data.length; i++) {
       if (data[i][targetColumn - 1].toString().toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
-        similarValues.push(data[i][targetColumn - 1]);
+        similarRows.push(data[i]);
       }
     }
 
-    return similarValues;
+    return similarRows;
   } catch (error) {
     return "Error: " + error.message;
   }
