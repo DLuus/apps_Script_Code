@@ -1,0 +1,23 @@
+/**
+ * Custom function to find similar entries in a column.
+ *
+ * @param {string} searchTerm - The term to search for similarities.
+ * @param {range} searchRange - The range to search for similarities.
+ * @return {array} - The list of similar entries.
+ * @customfunction
+ */
+function FIND_SIMILAR(searchTerm, searchRange) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getRange(searchRange).getValues();
+  var similarEntries = [];
+
+  for (var i = 0; i < data.length; i++) {
+    for (var j = 0; j < data[i].length; j++) {
+      if (String(data[i][j]).toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+        similarEntries.push(data[i][j]);
+      }
+    }
+  }
+
+  return similarEntries;
+}
