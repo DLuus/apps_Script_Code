@@ -3,24 +3,33 @@
  *
  * @param {string} searchTerm - The term to search for similarities.
  * @param {string} sheetName - The name of the sheet tab to search.
- * @param {string} searchRange - The range to search for similarities.
+ * @param {string} searchRange - The range to search for similarities (e.g., "B3:B100").
  * @param {number} targetColumn - The column to search for similarities (1-based index).
  * @return {array} - The list of rows similar to the search term.
  * @customfunction
  */
 function FIND_SIMILAR(searchTerm, sheetName, searchRange, targetColumn) {
   try {
+    if (!searchTerm || !sheetName || !searchRange || !targetColumn) {
+      throw new Error("Invalid parameters");
+    }
+
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
     if (!sheet) {
       throw new Error("Sheet not found");
     }
 
-    var data = sheet.getRange(searchRange).getValues();
+    var range = sheet.getRange(searchRange);
+    if (!range) {
+      throw new Error("Invalid search range");
+    }
+
+    var data = range.getValues();
     var similarRows = [];
 
     for (var i = 0; i < data.length; i++) {
       if (data[i][targetColumn - 1].toString().toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
-        similarRows.push(i + sheet.getRange(searchRange).getRow()); // Convert to sheet row number
+        similarRows.push(i + range.getRow()); // Convert to sheet row number
       }
     }
 
