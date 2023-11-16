@@ -5,7 +5,7 @@
  * @param {string} sheetName - The name of the sheet tab to search.
  * @param {string} searchRange - The range to search for similarities (e.g., "B3:B100").
  * @param {number} targetColumn - The column to search for similarities (1-based index).
- * @return {array} - The list of rows similar to the search term.
+ * @return {array} - The list of values similar to the search term.
  * @customfunction
  */
 function FIND_SIMILAR(searchTerm, sheetName, searchRange, targetColumn) {
@@ -25,15 +25,15 @@ function FIND_SIMILAR(searchTerm, sheetName, searchRange, targetColumn) {
     }
 
     var data = range.getValues();
-    var similarRows = [];
+    var similarValues = [];
 
     for (var i = 0; i < data.length; i++) {
       if (data[i][targetColumn - 1].toString().toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
-        similarRows.push(i + range.getRow()); // Convert to sheet row number
+        similarValues.push(data[i][targetColumn - 1]);
       }
     }
 
-    return similarRows;
+    return similarValues;
   } catch (error) {
     return "Error: " + error.message;
   }
