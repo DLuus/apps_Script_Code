@@ -1,23 +1,36 @@
 /**
- * Custom function to find similar entries in a column.
+ * Custom function to find similar entries in a specified column on a specific sheet tab.
  *
  * @param {string} searchTerm - The term to search for similarities.
- * @param {string} range - The range to search for similarities (e.g., "A:A").
- * @return {array} - The list of similar entries.
+ * @param {string} sheetName - The name of the sheet tab to search.
+ * @param {string} searchRange - The range to search for similarities.
+ * @param {string} targetColumn - The column to search for similarities.
+ * @return {array} - The list of rows similar to the search term.
  * @customfunction
  */
-function FIND_SIMILAR(searchTerm, range) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var lastRow = sheet.getLastRow();
-  var column = sheet.getRange(range);
-  var values = column.getValues();
-  var similarEntries = [];
+function FIND_SIMILAR(searchTerm, sheetName, searchRange, targetColumn) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  var data = sheet.getRange(searchRange).getValues();
+  var similarRows = [];
 
-  for (var i = 0; i < lastRow; i++) {
-    if (String(values[i][0]).toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
-      similarEntries.push(values[i][0]);
+  for (var i = 0; i < data.length; i++) {
+    if (String(data[i][targetColumn - 1]).toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+      similarRows.push(i + 1); // Adding 1 to convert from zero-based index to sheet row number
     }
   }
 
-  return similarEntries;
+  return similarRows;
 }
+
+// NOTE! Here's how you would use this function:
+
+//Open your Google Sheet.
+//In a cell, type something like =FIND_SIMILAR("yourSearchTerm", "Tab4", "B3:B100", 3) to find similar entries to "yourSearchTerm" in column 3 (C) of the "Tab4" sheet, within the range "B3:B100".
+//Press Enter.
+//Make sure to adjust the parameters according to your specific needs. The targetColumn parameter is one-based (e.g., 1 for column A, 2 for column B, etc.).
+
+
+
+
+
+
