@@ -73,11 +73,11 @@ function listSheetInfoInFolder() {
           var currentRow = tabNames.length;
 
           // Set the header value in row 1
-          targetTab.getRange(tabNamesColumn + (currentRow + 1)).setValue('Tab Names');
+          targetTab.getRange(tabNamesColumn + currentRow).setValue('Tab Names');
 
           // Loop through each tab name and set the value in a separate cell, starting from row 1
           sheetTabs.forEach(function (tabName, index) {
-            targetTab.getRange(tabNamesColumn + (currentRow + index + 2)).setValue(tabName);
+            targetTab.getRange(tabNamesColumn + (currentRow + index + 1)).setValue(tabName);
           });
 
         } catch (sheetError) {
@@ -100,20 +100,4 @@ function listSheetInfoInFolder() {
   }
 }
 
-function getFolderByName(folderName) {
-  var folders = DriveApp.getFoldersByName(folderName);
-  if (folders.hasNext()) {
-    return folders.next();
-  } else {
-    return null;
-  }
-}
-
-function onOpen() {
-  // Create a trigger to run the listSheetInfoInFolder function on opening or refreshing the target tab
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  ScriptApp.newTrigger('listSheetInfoInFolder')
-    .forSpreadsheet(ss)
-    .onOpen()
-    .create();
-}
+function getFolderByName(folder
