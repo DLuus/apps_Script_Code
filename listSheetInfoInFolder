@@ -70,7 +70,7 @@ function listSheetInfoInFolder() {
           });
 
           // Combine tab names into a single string and push to the array
-          tabNames.push([sheetTabs.join(', ')]);
+          tabNames.push([sheetTabs.join('\n')]);
         } catch (sheetError) {
           Logger.log('Error opening sheet: ' + sheetError);
         }
