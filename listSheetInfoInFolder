@@ -70,7 +70,7 @@ function listSheetInfoInFolder() {
           });
 
           // Get the row number for the current sheet
-          var currentRow = tabNames.length;
+          var currentRow = tabNames.length + 1;
 
           // Loop through each tab name and set the value in a separate cell, starting from the second row
           sheetTabs.forEach(function (tabName, index) {
