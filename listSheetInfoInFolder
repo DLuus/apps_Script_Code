@@ -70,11 +70,11 @@ function listSheetInfoInFolder() {
           });
 
           // Get the row number for the current sheet
-          var currentRow = tabNames.length + 1;
+          var currentRow = tabNames.length;
 
-          // Loop through each tab name and set the value in a separate cell
+          // Loop through each tab name and set the value in a separate cell, starting from the second row
           sheetTabs.forEach(function (tabName, index) {
-            targetTab.getRange(tabNamesColumn + (currentRow + index)).setValue(tabName);
+            targetTab.getRange(tabNamesColumn + (currentRow + index + 1)).setValue(tabName);
           });
 
         } catch (sheetError) {
