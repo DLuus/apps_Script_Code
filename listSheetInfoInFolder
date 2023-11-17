@@ -45,56 +45,47 @@ function listSheetInfoInFolder() {
 
     if (targetTab) {
       try {
-        // Clear existing data in the target columns (starting from row 1)
-        targetTab.getRange(urlColumn + '1:' + urlColumn + targetTab.getLastRow()).clearContent();
-        targetTab.getRange(tabNamesColumn + '1:' + tabNamesColumn + targetTab.getLastRow()).clearContent();
-      } catch (clearError) {
-        Logger.log('Error clearing existing data: ' + clearError);
-      }
+        // Clear existing data and headers in the target columns
+        targetTab.getRange(urlColumn + '1:' + tabNamesColumn + targetTab.getLastRow()).clearContent();
 
-      // Initialize arrays to hold sheet URLs and tab names
-      var sheetURLs = [['Sheet URLs']];
-      var tabNames = [['Tab Names']];
+        // Set the headers in row 1
+        targetTab.getRange(urlColumn + '1').setValue('Sheet URLs');
+        targetTab.getRange(tabNamesColumn + '1').setValue('Tab Names');
 
-      // Iterate through each sheet in the folder
-      while (files.hasNext()) {
-        var file = files.next();
-        var sheetURL = file.getUrl();
-        sheetURLs.push([sheetURL]);
+        // Initialize arrays to hold sheet URLs and tab names
+        var sheetURLs = [];
+        var tabNames = [];
 
-        // Open the sheet to get tab names
-        try {
-          var spreadsheet = SpreadsheetApp.open(file);
-          var sheetTabs = spreadsheet.getSheets().map(function (sheet) {
-            return sheet.getName();
-          });
+        // Iterate through each sheet in the folder
+        while (files.hasNext()) {
+          var file = files.next();
+          var sheetURL = file.getUrl();
+          sheetURLs.push([sheetURL]);
 
-          // Get the row number for the current sheet
-          var currentRow = tabNames.length;
+          // Open the sheet to get tab names
+          try {
+            var spreadsheet = SpreadsheetApp.open(file);
+            var sheetTabs = spreadsheet.getSheets().map(function (sheet) {
+              return sheet.getName();
+            });
 
-          // Set the header values in row 1
-          targetTab.getRange(urlColumn + '1').setValue('Sheet URLs');
-          targetTab.getRange(tabNamesColumn + '1').setValue('Tab Names');
+            // Loop through each tab name
+            sheetTabs.forEach(function (tabName) {
+              tabNames.push([tabName]);
+            });
 
-          // Loop through each tab name and set the value in a separate cell, starting from row 2
-          sheetTabs.forEach(function (tabName, index) {
-            targetTab.getRange(tabNamesColumn + (currentRow + index + 2)).setValue(tabName);
-          });
-
-          // Set the sheet URL value in row 2
-          targetTab.getRange(urlColumn + (currentRow + 2)).setValue(file.getUrl());
-
-        } catch (sheetError) {
-          Logger.log('Error opening sheet: ' + sheetError);
+          } catch (sheetError) {
+            Logger.log('Error opening sheet: ' + sheetError);
+          }
         }
-      }
 
-      // Write the sheet URLs to the target tab
-      try {
+        // Write the sheet URLs and tab names to the target tab
         targetTab.getRange(urlColumn + '2:' + urlColumn + (sheetURLs.length + 1)).setValues(sheetURLs);
+        targetTab.getRange(tabNamesColumn + '2:' + tabNamesColumn + (tabNames.length + 1)).setValues(tabNames);
 
         // Log that the operation has been completed
         Logger.log('Sheet info listed in ' + targetTabName + ' tab of the target sheet.');
+
       } catch (writeError) {
         Logger.log('Error writing data to target tab: ' + writeError);
       }
