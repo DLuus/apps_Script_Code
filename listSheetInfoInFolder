@@ -80,8 +80,13 @@ function listSheetInfoInFolder() {
         }
 
         // Write the sheet URLs and tab names to the target tab
-        targetTab.getRange(urlColumn + '2:' + urlColumn + (sheetURLs.length + 1)).setValues(sheetURLs);
-        targetTab.getRange(tabNamesColumn + '2:' + tabNamesColumn + (tabNames.length + 1)).setValues(tabNames);
+        if (sheetURLs.length > 0) {
+          targetTab.getRange(urlColumn + '2:' + urlColumn + (sheetURLs.length + 1)).setValues(sheetURLs);
+        }
+
+        if (tabNames.length > 0) {
+          targetTab.getRange(tabNamesColumn + '2:' + tabNamesColumn + (tabNames.length + 1)).setValues(tabNames);
+        }
 
         // Log that the operation has been completed
         Logger.log('Sheet info listed in ' + targetTabName + ' tab of the target sheet.');
