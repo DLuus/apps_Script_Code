@@ -1,0 +1,47 @@
+function listSheetNamesInFolder() {
+  // Replace 'YOUR_FOLDER_ID' with the actual ID of your folder
+  var folderId = 'YOUR_FOLDER_ID';
+
+  // Replace 'TargetSheet' with the name of the sheet where you want to list sheet names
+  var targetSheetName = 'TargetSheet';
+
+  // Replace 'A' with the column where you want to start listing sheet names
+  var targetColumn = 'A';
+
+  // Open the folder
+  var folder = DriveApp.getFolderById(folderId);
+
+  // Get all files (sheets) in the folder
+  var files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
+
+  // Open the target sheet
+  var targetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(targetSheetName);
+
+  // Clear existing data in the target column (starting from row 2)
+  targetSheet.getRange(targetColumn + '2:' + targetColumn + targetSheet.getLastRow()).clearContent();
+
+  // Initialize a 2D array to hold sheet names
+  var sheetNames = [['Sheet Names']];
+
+  // Iterate through each sheet in the folder
+  while (files.hasNext()) {
+    var file = files.next();
+    var sheetName = file.getName();
+    sheetNames.push([sheetName]);
+  }
+
+  // Write the sheet names to the target sheet
+  targetSheet.getRange(targetColumn + '2:' + targetColumn + (sheetNames.length + 1)).setValues(sheetNames);
+
+  // Log that the operation has been completed
+  Logger.log('Sheet names listed in ' + targetSheetName + ' sheet.');
+}
+
+function onOpen() {
+  // Create a trigger to run the listSheetNamesInFolder function on opening or refreshing the target sheet
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  ScriptApp.newTrigger('listSheetNamesInFolder')
+      .forSpreadsheet(ss)
+      .onOpen()
+      .create();
+}
