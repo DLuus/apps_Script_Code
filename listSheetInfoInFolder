@@ -100,4 +100,20 @@ function listSheetInfoInFolder() {
   }
 }
 
-function getFolderByName(folder
+function getFolderByName(folderName) {
+  var folders = DriveApp.getFoldersByName(folderName);
+  if (folders.hasNext()) {
+    return folders.next();
+  } else {
+    return null;
+  }
+}
+
+function onOpen() {
+  // Create a trigger to run the listSheetInfoInFolder function on opening or refreshing the target tab
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  ScriptApp.newTrigger('listSheetInfoInFolder')
+    .forSpreadsheet(ss)
+    .onOpen()
+    .create();
+}
