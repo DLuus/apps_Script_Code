@@ -44,9 +44,13 @@ function listSheetInfoInFolder() {
     }
 
     if (targetTab) {
-      // Clear existing data in the target columns (starting from row 2)
-      targetTab.getRange(urlColumn + '2:' + urlColumn + targetTab.getLastRow()).clearContent();
-      targetTab.getRange(tabNamesColumn + '2:' + tabNamesColumn + targetTab.getLastRow()).clearContent();
+      try {
+        // Clear existing data in the target columns (starting from row 2)
+        targetTab.getRange(urlColumn + '2:' + urlColumn + targetTab.getLastRow()).clearContent();
+        targetTab.getRange(tabNamesColumn + '2:' + tabNamesColumn + targetTab.getLastRow()).clearContent();
+      } catch (clearError) {
+        Logger.log('Error clearing existing data: ' + clearError);
+      }
 
       // Initialize arrays to hold sheet URLs and tab names
       var sheetURLs = [['Sheet URLs']];
@@ -59,42 +63,31 @@ function listSheetInfoInFolder() {
         sheetURLs.push([sheetURL]);
 
         // Open the sheet to get tab names
-        var spreadsheet = SpreadsheetApp.open(file);
-        var sheetTabs = spreadsheet.getSheets().map(function (sheet) {
-          return sheet.getName();
-        });
+        try {
+          var spreadsheet = SpreadsheetApp.open(file);
+          var sheetTabs = spreadsheet.getSheets().map(function (sheet) {
+            return sheet.getName();
+          });
 
-        // Combine tab names into a single string and push to the array
-        tabNames.push([sheetTabs.join(', ')]);
+          // Combine tab names into a single string and push to the array
+          tabNames.push([sheetTabs.join(', ')]);
+        } catch (sheetError) {
+          Logger.log('Error opening sheet: ' + sheetError);
+        }
       }
 
       // Write the sheet URLs and tab names to the target tab
-      targetTab.getRange(urlColumn + '2:' + urlColumn + (sheetURLs.length + 1)).setValues(sheetURLs);
-      targetTab.getRange(tabNamesColumn + '2:' + tabNamesColumn + (tabNames.length + 1)).setValues(tabNames);
+      try {
+        targetTab.getRange(urlColumn + '2:' + urlColumn + (sheetURLs.length + 1)).setValues(sheetURLs);
+        targetTab.getRange(tabNamesColumn + '2:' + tabNamesColumn + (tabNames.length + 1)).setValues(tabNames);
 
-      // Log that the operation has been completed
-      Logger.log('Sheet info listed in ' + targetTabName + ' tab of the target sheet.');
+        // Log that the operation has been completed
+        Logger.log('Sheet info listed in ' + targetTabName + ' tab of the target sheet.');
+      } catch (writeError) {
+        Logger.log('Error writing data to target tab: ' + writeError);
+      }
     }
   } else {
     Logger.log('Folder not found: ' + folderName);
   }
 }
-
-function getFolderByName(folderName) {
-  var folders = DriveApp.getFoldersByName(folderName);
-  if (folders.hasNext()) {
-    return folders.next();
-  } else {
-    return null;
-  }
-}
-
-function onOpen() {
-  // Create a trigger to run the listSheetInfoInFolder function on opening or refreshing the target tab
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  ScriptApp.newTrigger('listSheetInfoInFolder')
-    .forSpreadsheet(ss)
-    .onOpen()
-    .create();
-}
-
