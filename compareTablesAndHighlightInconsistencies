@@ -1,0 +1,39 @@
+function compareTablesAndHighlightInconsistencies() {
+  // Set the URL of your Google Sheet
+  var sheetURL = "YOUR_GOOGLE_SHEET_URL";
+
+  // Set the names of the tabs containing the tables
+  var table1TabName = "Table1";
+  var table2TabName = "Table2";
+
+  // Set the range of the tables (assuming headers are in the first row)
+  var table1Range = "A1:Z100"; // Adjust the range as needed
+  var table2Range = "A1:Z100"; // Adjust the range as needed
+
+  // Get the active spreadsheet
+  var spreadsheet = SpreadsheetApp.openByUrl(sheetURL);
+
+  // Get the sheets by name
+  var table1Sheet = spreadsheet.getSheetByName(table1TabName);
+  var table2Sheet = spreadsheet.getSheetByName(table2TabName);
+
+  // Get the data from the tables
+  var table1Data = table1Sheet.getRange(table1Range).getValues();
+  var table2Data = table2Sheet.getRange(table2Range).getValues();
+
+  // Get the dimensions of the tables
+  var numRows = Math.max(table1Data.length, table2Data.length);
+  var numCols = Math.max(table1Data[0].length, table2Data[0].length);
+
+  // Compare the tables and highlight inconsistencies
+  for (var row = 0; row < numRows; row++) {
+    for (var col = 0; col < numCols; col++) {
+      // Check if values are different
+      if (table1Data[row] && table2Data[row] && table1Data[row][col] !== table2Data[row][col]) {
+        // Highlight the cells with inconsistencies
+        table1Sheet.getRange(row + 1, col + 1).setBackground("#FFEB3B"); // Set the background color to light yellow
+        table2Sheet.getRange(row + 1, col + 1).setBackground("#FFEB3B"); // Set the background color to light yellow
+      }
+    }
+  }
+}
