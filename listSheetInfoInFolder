@@ -79,9 +79,13 @@ function listSheetInfoInFolder() {
           }
         }
 
+        // Log the values to check their sizes
+        Logger.log('Sheet URLs array: ' + JSON.stringify(sheetURLs));
+        Logger.log('Tab Names array: ' + JSON.stringify(tabNames));
+
         // Write the sheet URLs and tab names to the target tab
-        targetTab.getRange(urlColumn + '2:' + urlColumn + (sheetURLs.length + 1)).setValues(sheetURLs);
-        targetTab.getRange(tabNamesColumn + '2:' + tabNamesColumn + (tabNames.length + 1)).setValues(tabNames);
+        targetTab.getRange(urlColumn + '2').setValues(sheetURLs);
+        targetTab.getRange(tabNamesColumn + '2').setValues(tabNames);
 
         // Log that the operation has been completed
         Logger.log('Sheet info listed in ' + targetTabName + ' tab of the target sheet.');
