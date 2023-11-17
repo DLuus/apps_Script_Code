@@ -72,13 +72,17 @@ function listSheetInfoInFolder() {
           // Get the row number for the current sheet
           var currentRow = tabNames.length;
 
-          // Set the header value in row 1
-          targetTab.getRange(tabNamesColumn + currentRow).setValue('Tab Names');
+          // Set the header values in row 1
+          targetTab.getRange(urlColumn + '1').setValue('Sheet URLs');
+          targetTab.getRange(tabNamesColumn + '1').setValue('Tab Names');
 
-          // Loop through each tab name and set the value in a separate cell, starting from row 1
+          // Loop through each tab name and set the value in a separate cell, starting from row 2
           sheetTabs.forEach(function (tabName, index) {
-            targetTab.getRange(tabNamesColumn + (currentRow + index + 1)).setValue(tabName);
+            targetTab.getRange(tabNamesColumn + (currentRow + index + 2)).setValue(tabName);
           });
+
+          // Set the sheet URL value in row 2
+          targetTab.getRange(urlColumn + (currentRow + 2)).setValue(file.getUrl());
 
         } catch (sheetError) {
           Logger.log('Error opening sheet: ' + sheetError);
