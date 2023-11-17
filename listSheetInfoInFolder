@@ -80,8 +80,8 @@ function listSheetInfoInFolder() {
         }
 
         // Write the sheet URLs and tab names to the target tab
-        targetTab.getRange(urlColumn + '2:' + urlColumn + (sheetURLs.length + 1)).setValues(sheetURLs);
-        targetTab.getRange(tabNamesColumn + '2:' + tabNamesColumn + (tabNames.length + 1)).setValues(tabNames);
+        targetTab.getRange(urlColumn + '2').offset(0, 0, sheetURLs.length, 1).setValues(sheetURLs);
+        targetTab.getRange(tabNamesColumn + '2').offset(0, 0, tabNames.length, 1).setValues(tabNames);
 
         // Log that the operation has been completed
         Logger.log('Sheet info listed in ' + targetTabName + ' tab of the target sheet.');
