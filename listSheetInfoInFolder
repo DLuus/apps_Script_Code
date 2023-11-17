@@ -48,13 +48,17 @@ function listSheetInfoInFolder() {
         // Clear existing data in the target columns (starting from row 2)
         targetTab.getRange(urlColumn + '2:' + urlColumn + targetTab.getLastRow()).clearContent();
         targetTab.getRange(tabNamesColumn + '2:' + tabNamesColumn + targetTab.getLastRow()).clearContent();
+
+        // Set headers for both columns
+        targetTab.getRange(urlColumn + '1').setValue('Sheet URLs');
+        targetTab.getRange(tabNamesColumn + '1').setValue('Tab Names');
       } catch (clearError) {
         Logger.log('Error clearing existing data: ' + clearError);
       }
 
       // Initialize arrays to hold sheet URLs and tab names
-      var sheetURLs = [['Sheet URLs']];
-      var tabNames = [['Tab Names']];
+      var sheetURLs = [];
+      var tabNames = [];
 
       // Iterate through each sheet in the folder
       while (files.hasNext()) {
