@@ -72,6 +72,9 @@ function listSheetInfoInFolder() {
           // Get the row number for the current sheet
           var currentRow = tabNames.length + 1;
 
+          // Set the header value separately in the first row
+          targetTab.getRange(tabNamesColumn + currentRow).setValue('Tab Names');
+
           // Loop through each tab name and set the value in a separate cell, starting from the second row
           sheetTabs.forEach(function (tabName, index) {
             targetTab.getRange(tabNamesColumn + (currentRow + index + 1)).setValue(tabName);
