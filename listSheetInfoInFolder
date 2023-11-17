@@ -1,0 +1,63 @@
+function listSheetInfoInFolder() {
+  // Replace 'YOUR_FOLDER_ID' with the actual ID of your folder
+  var folderId = 'YOUR_FOLDER_ID';
+
+  // Replace 'TargetSheet' with the name of the sheet where you want to list sheet info
+  var targetSheetName = 'TargetSheet';
+
+  // Replace 'A' with the column where you want to start listing sheet URLs
+  var urlColumn = 'A';
+
+  // Replace 'B' with the column where you want to start listing tab names
+  var tabNamesColumn = 'B';
+
+  // Open the folder
+  var folder = DriveApp.getFolderById(folderId);
+
+  // Get all files (sheets) in the folder
+  var files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
+
+  // Open the target sheet
+  var targetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(targetSheetName);
+
+  // Clear existing data in the target columns (starting from row 2)
+  targetSheet.getRange(urlColumn + '2:' + urlColumn + targetSheet.getLastRow()).clearContent();
+  targetSheet.getRange(tabNamesColumn + '2:' + tabNamesColumn + targetSheet.getLastRow()).clearContent();
+
+  // Initialize arrays to hold sheet URLs and tab names
+  var sheetURLs = [['Sheet URLs']];
+  var tabNames = [['Tab Names']];
+
+  // Iterate through each sheet in the folder
+  while (files.hasNext()) {
+    var file = files.next();
+    var sheetURL = file.getUrl();
+    sheetURLs.push([sheetURL]);
+
+    // Open the sheet to get tab names
+    var spreadsheet = SpreadsheetApp.open(file);
+    var sheetTabs = spreadsheet.getSheets().map(function(sheet) {
+      return sheet.getName();
+    });
+
+    // Combine tab names into a single string and push to the array
+    tabNames.push([sheetTabs.join(', ')]);
+  }
+
+  // Write the sheet URLs and tab names to the target sheet
+  targetSheet.getRange(urlColumn + '2:' + urlColumn + (sheetURLs.length + 1)).setValues(sheetURLs);
+  targetSheet.getRange(tabNamesColumn + '2:' + tabNamesColumn + (tabNames.length + 1)).setValues(tabNames);
+
+  // Log that the operation has been completed
+  Logger.log('Sheet info listed in ' + targetSheetName + ' sheet.');
+}
+
+function onOpen() {
+  // Create a trigger to run the listSheetInfoInFolder function on opening or refreshing the target sheet
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  ScriptApp.newTrigger('listSheetInfoInFolder')
+      .forSpreadsheet(ss)
+      .onOpen()
+      .create();
+}
+
