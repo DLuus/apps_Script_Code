@@ -45,13 +45,13 @@ function listSheetInfoInFolder() {
 
     if (targetTab) {
       try {
-        // Clear existing data in the target columns (starting from row 2)
+        // Clear existing data and headings in the target columns (starting from row 2)
         targetTab.getRange(urlColumn + '2:' + urlColumn + targetTab.getLastRow()).clearContent();
         targetTab.getRange(tabNamesColumn + '2:' + tabNamesColumn + targetTab.getLastRow()).clearContent();
 
-        // Set headers for both columns
-        targetTab.getRange(urlColumn + '1').setValue('Sheet URLs');
-        targetTab.getRange(tabNamesColumn + '1').setValue('Tab Names');
+        // Set headings in row 2
+        targetTab.getRange(urlColumn + '2').setValue('Sheet URLs');
+        targetTab.getRange(tabNamesColumn + '2').setValue('Tab Names');
       } catch (clearError) {
         Logger.log('Error clearing existing data: ' + clearError);
       }
@@ -73,22 +73,17 @@ function listSheetInfoInFolder() {
             return sheet.getName();
           });
 
-          // Get the row number for the current sheet
-          var currentRow = tabNames.length + 1;
-
-          // Loop through each tab name and set the value in a separate cell
-          sheetTabs.forEach(function (tabName, index) {
-            targetTab.getRange(tabNamesColumn + (currentRow + index)).setValue(tabName);
-          });
-
+          // Push each tab name separately to the array
+          tabNames.push([sheetTabs.join('\n')]);
         } catch (sheetError) {
           Logger.log('Error opening sheet: ' + sheetError);
         }
       }
 
-      // Write the sheet URLs to the target tab
+      // Write the sheet URLs and tab names to the target tab
       try {
-        targetTab.getRange(urlColumn + '2:' + urlColumn + (sheetURLs.length + 1)).setValues(sheetURLs);
+        targetTab.getRange(urlColumn + '3:' + urlColumn + (sheetURLs.length + 2)).setValues(sheetURLs);
+        targetTab.getRange(tabNamesColumn + '3:' + tabNamesColumn + (tabNames.length + 2)).setValues(tabNames);
 
         // Log that the operation has been completed
         Logger.log('Sheet info listed in ' + targetTabName + ' tab of the target sheet.');
