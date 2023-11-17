@@ -18,14 +18,30 @@ function listSheetInfoInFolder() {
   var folder = getFolderByName(folderName);
 
   if (folder) {
+    Logger.log('Folder found: ' + folder.getName());
+
     // Get all files (sheets) in the folder
     var files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
 
     // Open the target sheet by URL
-    var targetSheet = SpreadsheetApp.openByUrl(targetSheetUrl);
+    var targetSheet = null;
+    try {
+      targetSheet = SpreadsheetApp.openByUrl(targetSheetUrl);
+      Logger.log('Target sheet opened successfully: ' + targetSheet.getName());
+    } catch (error) {
+      Logger.log('Error opening target sheet: ' + error);
+    }
 
     // Get the target tab by name
-    var targetTab = targetSheet.getSheetByName(targetTabName);
+    var targetTab = null;
+    if (targetSheet) {
+      targetTab = targetSheet.getSheetByName(targetTabName);
+      if (targetTab) {
+        Logger.log('Target tab found: ' + targetTab.getName());
+      } else {
+        Logger.log('Target tab not found: ' + targetTabName);
+      }
+    }
 
     if (targetTab) {
       // Clear existing data in the target columns (starting from row 2)
@@ -58,8 +74,6 @@ function listSheetInfoInFolder() {
 
       // Log that the operation has been completed
       Logger.log('Sheet info listed in ' + targetTabName + ' tab of the target sheet.');
-    } else {
-      Logger.log('Target tab not found: ' + targetTabName);
     }
   } else {
     Logger.log('Folder not found: ' + folderName);
@@ -83,3 +97,4 @@ function onOpen() {
     .onOpen()
     .create();
 }
+
