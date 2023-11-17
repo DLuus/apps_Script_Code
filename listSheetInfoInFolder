@@ -69,14 +69,9 @@ function listSheetInfoInFolder() {
             return sheet.getName();
           });
 
-          // Push each tab name separately to the array
-          sheetTabs.forEach(function (tabName) {
-            tabNames.push([tabName]);
-            // Add an empty row if there are more tabs
-            if (sheetTabs.length > 1) {
-              tabNames.push(['']);
-            }
-          });
+          // Concatenate tab names with line breaks and push to the array
+          var concatenatedTabs = sheetTabs.join('\n');
+          tabNames.push([concatenatedTabs]);
         } catch (sheetError) {
           Logger.log('Error opening sheet: ' + sheetError);
         }
