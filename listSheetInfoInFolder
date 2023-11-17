@@ -69,28 +69,22 @@ function listSheetInfoInFolder() {
             return sheet.getName();
           });
 
-          // Push each tab name separately to the array
-          sheetTabs.forEach(function (tabName) {
-            tabNames.push([tabName]);
-            // Add an empty row if there are more tabs
-            if (sheetTabs.length > 1) {
-              tabNames.push(['']);
-            }
+          // Get the row number for the current sheet
+          var currentRow = tabNames.length + 1;
+
+          // Loop through each tab name and set the value in a separate cell
+          sheetTabs.forEach(function (tabName, index) {
+            targetTab.getRange(tabNamesColumn + (currentRow + index)).setValue(tabName);
           });
+
         } catch (sheetError) {
           Logger.log('Error opening sheet: ' + sheetError);
         }
       }
 
-      // Write the sheet URLs and tab names to the target tab
+      // Write the sheet URLs to the target tab
       try {
-        // Combine sheet URLs and tab names into a single array for each row
-        var combinedData = sheetURLs.map(function (_, i) {
-          return [sheetURLs[i][0], tabNames[i][0]];
-        });
-
-        // Set values for both columns in the target tab
-        targetTab.getRange(urlColumn + '2:' + tabNamesColumn + (combinedData.length + 1)).setValues(combinedData);
+        targetTab.getRange(urlColumn + '2:' + urlColumn + (sheetURLs.length + 1)).setValues(sheetURLs);
 
         // Log that the operation has been completed
         Logger.log('Sheet info listed in ' + targetTabName + ' tab of the target sheet.');
