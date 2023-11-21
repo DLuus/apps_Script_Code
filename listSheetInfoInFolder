@@ -2,8 +2,8 @@ function listSheetNamesInFolder() {
   // Replace 'FOLDER_ID' with the ID of the folder you want to scan
   var folderId = 'FOLDER_ID';
 
-  // Replace 'DESTINATION_SHEET_NAME' with the name of the sheet where you want to paste the information
-  var destinationSheetName = 'DESTINATION_SHEET_NAME';
+  // Replace 'DESTINATION_SHEET_URL' with the URL of the sheet where you want to paste the information
+  var destinationSheetUrl = 'DESTINATION_SHEET_URL';
 
   // Replace 'DESTINATION_TAB_NAME' with the name of the tab where you want to paste the information
   var destinationTabName = 'DESTINATION_TAB_NAME';
@@ -11,8 +11,9 @@ function listSheetNamesInFolder() {
   // Get the specified folder
   var folder = DriveApp.getFolderById(folderId);
 
-  // Get the destination sheet
-  var destinationSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(destinationSheetName);
+  // Get the destination sheet by URL
+  var destinationSpreadsheet = SpreadsheetApp.openByUrl(destinationSheetUrl);
+  var destinationSheet = destinationSpreadsheet.getSheetByName(destinationTabName);
 
   // Clear existing data in the destination sheet
   destinationSheet.clear();
