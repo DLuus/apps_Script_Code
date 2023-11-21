@@ -22,15 +22,13 @@ function listSheetNamesInFolder() {
   destinationSheet.getRange(1, 1).setValue('Sheet Name');
   destinationSheet.getRange(1, 2).setValue('Tab Name');
 
-  // Get all files in the specified folder using Drive service
-  var files = Drive.Files.list({
-    q: "'" + folderId + "' in parents and mimeType='application/vnd.google-apps.spreadsheet'",
-  }).items;
+  // Get all files in the specified folder using DriveApp service
+  var files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
 
   // Loop through each file
-  for (var i = 0; i < files.length; i++) {
-    var file = files[i];
-    var spreadsheet = SpreadsheetApp.openById(file.id);
+  while (files.hasNext()) {
+    var file = files.next();
+    var spreadsheet = SpreadsheetApp.openById(file.getId());
 
     // Get all sheet names in the current spreadsheet
     var sheetNames = spreadsheet.getSheets().map(function(sheet) {
@@ -46,9 +44,9 @@ function listSheetNamesInFolder() {
     }));
 
     // Paste tab names into the destination sheet
-    for (var j = 0; j < sheetNames.length; j++) {
-      var tabNames = spreadsheet.getSheetByName(sheetNames[j]).getSheetValues(1, 1, 1, spreadsheet.getSheetByName(sheetNames[j]).getLastColumn())[0];
-      destinationSheet.getRange(nextRow + j, 2).setValue(tabNames.join(', '));
+    for (var i = 0; i < sheetNames.length; i++) {
+      var tabNames = spreadsheet.getSheetByName(sheetNames[i]).getSheetValues(1, 1, 1, spreadsheet.getSheetByName(sheetNames[i]).getLastColumn())[0];
+      destinationSheet.getRange(nextRow + i, 2).setValue(tabNames.join(', '));
     }
   }
 }
