@@ -19,32 +19,38 @@ function listSheetNamesInFolder() {
   destinationSheet.getRange(1, 1).setValue('Sheet Name');
   destinationSheet.getRange(1, 2).setValue('Tab Name');
 
-  // Get all files in the specified folder using DriveApp service
-  var folder = DriveApp.getFolderById(folderId);
-  var files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
+  try {
+    // Get the specified folder
+    var folder = DriveApp.getFolderById(folderId);
 
-  // Loop through each file
-  while (files.hasNext()) {
-    var file = files.next();
-    var spreadsheet = SpreadsheetApp.openById(file.getId());
+    // Get all files in the specified folder using DriveApp service
+    var files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
 
-    // Get all sheet names in the current spreadsheet
-    var sheetNames = spreadsheet.getSheets().map(function(sheet) {
-      return sheet.getName();
-    });
+    // Loop through each file
+    while (files.hasNext()) {
+      var file = files.next();
+      var spreadsheet = SpreadsheetApp.openById(file.getId());
 
-    // Get the first row without data in the destination sheet
-    var nextRow = destinationSheet.getLastRow() + 1;
+      // Get all sheet names in the current spreadsheet
+      var sheetNames = spreadsheet.getSheets().map(function(sheet) {
+        return sheet.getName();
+      });
 
-    // Paste sheet names into the destination sheet
-    destinationSheet.getRange(nextRow, 1, sheetNames.length, 1).setValues(sheetNames.map(function(name) {
-      return [name];
-    }));
+      // Get the first row without data in the destination sheet
+      var nextRow = destinationSheet.getLastRow() + 1;
 
-    // Paste tab names into the destination sheet
-    for (var j = 0; j < sheetNames.length; j++) {
-      var tabNames = spreadsheet.getSheetByName(sheetNames[j]).getSheetValues(1, 1, 1, spreadsheet.getSheetByName(sheetNames[j]).getLastColumn())[0];
-      destinationSheet.getRange(nextRow + j, 2).setValue(tabNames.join(', '));
+      // Paste sheet names into the destination sheet
+      destinationSheet.getRange(nextRow, 1, sheetNames.length, 1).setValues(sheetNames.map(function(name) {
+        return [name];
+      }));
+
+      // Paste tab names into the destination sheet
+      for (var j = 0; j < sheetNames.length; j++) {
+        var tabNames = spreadsheet.getSheetByName(sheetNames[j]).getSheetValues(1, 1, 1, spreadsheet.getSheetByName(sheetNames[j]).getLastColumn())[0];
+        destinationSheet.getRange(nextRow + j, 2).setValue(tabNames.join(', '));
+      }
     }
+  } catch (error) {
+    Logger.log('Error: ' + error.toString());
   }
 }
