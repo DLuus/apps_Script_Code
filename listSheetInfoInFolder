@@ -42,6 +42,10 @@ function listSheetNamesInFolder() {
         // Get the first row without data in the destination sheet
         var nextRow = destinationSheet.getLastRow() + 1;
 
+        // Log information for troubleshooting
+        Logger.log('Processing file: %s', file.getName());
+        Logger.log('Sheet names: %s', sheetNames.join(', '));
+
         // Paste sheet names into the destination sheet
         destinationSheet.getRange(nextRow, 1, sheetNames.length, 1).setValues(sheetNames.map(function(name) {
           return [name];
@@ -52,6 +56,8 @@ function listSheetNamesInFolder() {
           var tabNames = spreadsheet.getSheetByName(sheetNames[j]).getSheetValues(1, 1, 1, spreadsheet.getSheetByName(sheetNames[j]).getLastColumn())[0];
           destinationSheet.getRange(nextRow + j, 2).setValue(tabNames.join(', '));
         }
+
+        Logger.log('Data successfully written to the destination sheet.');
       }
     }
   } catch (error) {
