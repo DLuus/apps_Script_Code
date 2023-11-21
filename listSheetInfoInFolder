@@ -1,3 +1,13 @@
+function listSheetNamesInFolder() {
+  // Replace 'FOLDER_NAME' with the name of the folder you want to scan
+  var folderName = 'FOLDER_NAME';
+
+  // Replace 'DESTINATION_SHEET_URL' with the URL of the sheet where you want to paste the information
+  var destinationSheetUrl = 'DESTINATION_SHEET_URL';
+
+  // Replace 'DESTINATION_TAB_NAME' with the name of the tab where you want to paste the information
+  var destinationTabName = 'DESTINATION_TAB_NAME';
+
   // Get the destination sheet by URL
   var destinationSpreadsheet = SpreadsheetApp.openByUrl(destinationSheetUrl);
   var destinationSheet = destinationSpreadsheet.getSheetByName(destinationTabName);
