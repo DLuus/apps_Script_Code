@@ -20,8 +20,9 @@ function listSheetNamesInFolder() {
   destinationSheet.getRange(1, 2).setValue('Tab Name');
 
   try {
-    // Get all files in the root of Google Drive
-    var files = DriveApp.getRootFolder().getFilesByName(folderName);
+    // Get all files in the root of Google Drive using DriveApp service
+    var folder = DriveApp.getFoldersByName(folderName).next();
+    var files = folder.getFiles();
 
     // Loop through each file
     while (files.hasNext()) {
@@ -57,4 +58,5 @@ function listSheetNamesInFolder() {
     Logger.log('Error: ' + error.toString());
   }
 }
+
 
