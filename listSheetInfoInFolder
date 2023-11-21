@@ -8,9 +8,6 @@ function listSheetNamesInFolder() {
   // Replace 'DESTINATION_TAB_NAME' with the name of the tab where you want to paste the information
   var destinationTabName = 'DESTINATION_TAB_NAME';
 
-  // Get the specified folder
-  var folder = DriveApp.getFolderById(folderId);
-
   // Get the destination sheet by URL
   var destinationSpreadsheet = SpreadsheetApp.openByUrl(destinationSheetUrl);
   var destinationSheet = destinationSpreadsheet.getSheetByName(destinationTabName);
@@ -22,13 +19,15 @@ function listSheetNamesInFolder() {
   destinationSheet.getRange(1, 1).setValue('Sheet Name');
   destinationSheet.getRange(1, 2).setValue('Tab Name');
 
-  // Get all files in the specified folder using DriveApp service
-  var files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
+  // Get all files in the specified folder using Drive API
+  var files = Drive.Files.list({
+    q: "'" + folderId + "' in parents and mimeType='application/vnd.google-apps.spreadsheet'",
+  }).items;
 
   // Loop through each file
-  while (files.hasNext()) {
-    var file = files.next();
-    var spreadsheet = SpreadsheetApp.openById(file.getId());
+  for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    var spreadsheet = SpreadsheetApp.openById(file.id);
 
     // Get all sheet names in the current spreadsheet
     var sheetNames = spreadsheet.getSheets().map(function(sheet) {
@@ -44,9 +43,9 @@ function listSheetNamesInFolder() {
     }));
 
     // Paste tab names into the destination sheet
-    for (var i = 0; i < sheetNames.length; i++) {
-      var tabNames = spreadsheet.getSheetByName(sheetNames[i]).getSheetValues(1, 1, 1, spreadsheet.getSheetByName(sheetNames[i]).getLastColumn())[0];
-      destinationSheet.getRange(nextRow + i, 2).setValue(tabNames.join(', '));
+    for (var j = 0; j < sheetNames.length; j++) {
+      var tabNames = spreadsheet.getSheetByName(sheetNames[j]).getSheetValues(1, 1, 1, spreadsheet.getSheetByName(sheetNames[j]).getLastColumn())[0];
+      destinationSheet.getRange(nextRow + j, 2).setValue(tabNames.join(', '));
     }
   }
 }
