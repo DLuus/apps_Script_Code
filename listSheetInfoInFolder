@@ -16,8 +16,8 @@ function listSheetNamesInFolder() {
   destinationSheet.clear();
 
   // Set the headers in the destination sheet
-  destinationSheet.getRange(1, 1).setValue('Sheet Name');
-  destinationSheet.getRange(1, 2).setValue('Tab Name');
+  destinationSheet.getRange(1, 1).setValue('Spreadsheet Name');
+  destinationSheet.getRange(1, 2).setValue('Sheet Name');
 
   try {
     // Get all files in the root of Google Drive using DriveApp service
@@ -41,16 +41,13 @@ function listSheetNamesInFolder() {
       Logger.log('Processing file: %s', file.getName());
       Logger.log('Sheet names: %s', sheetNames.join(', '));
 
+      // Paste spreadsheet name into the destination sheet
+      destinationSheet.getRange(nextRow, 1).setValue(file.getName());
+
       // Paste sheet names into the destination sheet
-      destinationSheet.getRange(nextRow, 1, sheetNames.length, 1).setValues(sheetNames.map(function(name) {
+      destinationSheet.getRange(nextRow, 2, sheetNames.length, 1).setValues(sheetNames.map(function(name) {
         return [name];
       }));
-
-      // Paste tab names into the destination sheet
-      for (var j = 0; j < sheetNames.length; j++) {
-        var tabNames = spreadsheet.getSheetByName(sheetNames[j]).getSheetValues(1, 1, 1, spreadsheet.getSheetByName(sheetNames[j]).getLastColumn())[0];
-        destinationSheet.getRange(nextRow + j, 2).setValue(tabNames.join(', '));
-      }
 
       Logger.log('Data successfully written to the destination sheet.');
     }
@@ -58,5 +55,3 @@ function listSheetNamesInFolder() {
     Logger.log('Error: ' + error.toString());
   }
 }
-
-
