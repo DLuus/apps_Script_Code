@@ -1,114 +1,51 @@
-function listSheetInfoInFolder() {
-  // Replace 'YOUR_FOLDER_NAME' with the name of your folder
-  var folderName = 'YOUR_FOLDER_NAME';
+function listSheetNamesInFolder() {
+  // Replace 'FOLDER_ID' with the ID of the folder you want to scan
+  var folderId = 'FOLDER_ID';
 
-  // Replace 'YOUR_TARGET_SHEET_URL' with the URL of your target sheet
-  var targetSheetUrl = 'YOUR_TARGET_SHEET_URL';
+  // Replace 'DESTINATION_SHEET_NAME' with the name of the sheet where you want to paste the information
+  var destinationSheetName = 'DESTINATION_SHEET_NAME';
 
-  // Replace 'YOUR_TARGET_TAB_NAME' with the name of your target tab
-  var targetTabName = 'YOUR_TARGET_TAB_NAME';
+  // Replace 'DESTINATION_TAB_NAME' with the name of the tab where you want to paste the information
+  var destinationTabName = 'DESTINATION_TAB_NAME';
 
-  // Replace 'A' with the column where you want to start listing sheet URLs
-  var urlColumn = 'A';
+  // Get the specified folder
+  var folder = DriveApp.getFolderById(folderId);
 
-  // Replace 'B' with the column where you want to start listing tab names
-  var tabNamesColumn = 'B';
+  // Get the destination sheet
+  var destinationSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(destinationSheetName);
 
-  // Get the folder by name
-  var folder = getFolderByName(folderName);
+  // Clear existing data in the destination sheet
+  destinationSheet.clear();
 
-  if (folder) {
-    Logger.log('Folder found: ' + folder.getName());
+  // Set the headers in the destination sheet
+  destinationSheet.getRange(1, 1).setValue('Sheet Name');
+  destinationSheet.getRange(1, 2).setValue('Tab Name');
 
-    // Get all files (sheets) in the folder
-    var files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
+  // Get all files in the specified folder
+  var files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
 
-    // Open the target sheet by URL
-    var targetSheet = null;
-    try {
-      targetSheet = SpreadsheetApp.openByUrl(targetSheetUrl);
-      Logger.log('Target sheet opened successfully: ' + targetSheet.getName());
-    } catch (error) {
-      Logger.log('Error opening target sheet: ' + error);
+  // Loop through each file
+  while (files.hasNext()) {
+    var file = files.next();
+    var spreadsheet = SpreadsheetApp.openById(file.getId());
+
+    // Get all sheet names in the current spreadsheet
+    var sheetNames = spreadsheet.getSheets().map(function(sheet) {
+      return sheet.getName();
+    });
+
+    // Get the first row without data in the destination sheet
+    var nextRow = destinationSheet.getLastRow() + 1;
+
+    // Paste sheet names into the destination sheet
+    destinationSheet.getRange(nextRow, 1, sheetNames.length, 1).setValues(sheetNames.map(function(name) {
+      return [name];
+    }));
+
+    // Paste tab names into the destination sheet
+    for (var i = 0; i < sheetNames.length; i++) {
+      var tabNames = spreadsheet.getSheetByName(sheetNames[i]).getSheetValues(1, 1, 1, spreadsheet.getSheetByName(sheetNames[i]).getLastColumn())[0];
+      destinationSheet.getRange(nextRow + i, 2).setValue(tabNames.join(', '));
     }
-
-    // Get the target tab by name
-    var targetTab = null;
-    if (targetSheet) {
-      targetTab = targetSheet.getSheetByName(targetTabName);
-      if (targetTab) {
-        Logger.log('Target tab found: ' + targetTab.getName());
-      } else {
-        Logger.log('Target tab not found: ' + targetTabName);
-      }
-    }
-
-    if (targetTab) {
-      try {
-        // Clear existing data and headers in the target columns
-        targetTab.getRange(urlColumn + '1:' + tabNamesColumn + targetTab.getLastRow()).clearContent();
-
-        // Set the headers in row 1
-        targetTab.getRange(urlColumn + '1').setValue('Sheet URLs');
-        targetTab.getRange(tabNamesColumn + '1').setValue('Tab Names');
-
-        // Initialize arrays to hold sheet URLs and tab names
-        var sheetURLs = [];
-        var tabNames = [];
-
-        // Iterate through each sheet in the folder
-        while (files.hasNext()) {
-          var file = files.next();
-          var sheetURL = file.getUrl();
-          sheetURLs.push([sheetURL]);
-
-          // Open the sheet to get tab names
-          try {
-            var spreadsheet = SpreadsheetApp.open(file);
-            var sheetTabs = spreadsheet.getSheets().map(function (sheet) {
-              return sheet.getName();
-            });
-
-            // Loop through each tab name
-            sheetTabs.forEach(function (tabName) {
-              tabNames.push([tabName]);
-            });
-
-          } catch (sheetError) {
-            Logger.log('Error opening sheet: ' + sheetError);
-          }
-        }
-
-        // Write the sheet URLs and tab names to the target tab
-        targetTab.getRange(urlColumn + '2').offset(0, 0, sheetURLs.length, 1).setValues(sheetURLs);
-        targetTab.getRange(tabNamesColumn + '2').offset(0, 0, tabNames.length, 1).setValues(tabNames);
-
-        // Log that the operation has been completed
-        Logger.log('Sheet info listed in ' + targetTabName + ' tab of the target sheet.');
-
-      } catch (writeError) {
-        Logger.log('Error writing data to target tab: ' + writeError);
-      }
-    }
-  } else {
-    Logger.log('Folder not found: ' + folderName);
   }
-}
-
-function getFolderByName(folderName) {
-  var folders = DriveApp.getFoldersByName(folderName);
-  if (folders.hasNext()) {
-    return folders.next();
-  } else {
-    return null;
-  }
-}
-
-function onOpen() {
-  // Create a trigger to run the listSheetInfoInFolder function on opening or refreshing the target tab
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  ScriptApp.newTrigger('listSheetInfoInFolder')
-    .forSpreadsheet(ss)
-    .onOpen()
-    .create();
 }
