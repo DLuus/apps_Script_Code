@@ -68,3 +68,5 @@ function listSheetNamesInFolder() {
     Logger.log('Error: ' + error.toString());
   }
 }
+
+// NOTE! only sheets with "_dataFeed" written in the name will be retrived
