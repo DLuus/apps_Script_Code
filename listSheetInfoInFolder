@@ -58,4 +58,3 @@ function listSheetNamesInFolder() {
     Logger.log('Error: ' + error.toString());
   }
 }
-
