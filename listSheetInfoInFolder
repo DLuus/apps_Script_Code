@@ -1,6 +1,6 @@
 function listSheetNamesInFolder() {
-  // Replace 'FOLDER_ID' with the ID of the folder you want to scan
-  var folderId = 'FOLDER_ID';
+  // Replace 'FOLDER_NAME' with the name of the folder you want to scan
+  var folderName = 'FOLDER_NAME';
 
   // Replace 'DESTINATION_SHEET_URL' with the URL of the sheet where you want to paste the information
   var destinationSheetUrl = 'DESTINATION_SHEET_URL';
@@ -20,36 +20,42 @@ function listSheetNamesInFolder() {
   destinationSheet.getRange(1, 2).setValue('Tab Name');
 
   try {
-    // Get all files in the specified folder using Drive API
-    var files = Drive.Files.list({
-      q: "'" + folderId + "' in parents and mimeType='application/vnd.google-apps.spreadsheet'",
-    }).items;
+    // Get all files in the root of Google Drive
+    var files = DriveApp.getRootFolder().getFiles();
 
     // Loop through each file
-    for (var i = 0; i < files.length; i++) {
-      var file = files[i];
-      var spreadsheet = SpreadsheetApp.openById(file.id);
+    while (files.hasNext()) {
+      var file = files.next();
 
-      // Get all sheet names in the current spreadsheet
-      var sheetNames = spreadsheet.getSheets().map(function(sheet) {
-        return sheet.getName();
-      });
+      // Check if the file is a Google Sheets file and is in the specified folder
+      if (
+        file.getMimeType() === MimeType.GOOGLE_SHEETS &&
+        file.getParents().next().getName() === folderName
+      ) {
+        var spreadsheet = SpreadsheetApp.openById(file.getId());
 
-      // Get the first row without data in the destination sheet
-      var nextRow = destinationSheet.getLastRow() + 1;
+        // Get all sheet names in the current spreadsheet
+        var sheetNames = spreadsheet.getSheets().map(function(sheet) {
+          return sheet.getName();
+        });
 
-      // Paste sheet names into the destination sheet
-      destinationSheet.getRange(nextRow, 1, sheetNames.length, 1).setValues(sheetNames.map(function(name) {
-        return [name];
-      }));
+        // Get the first row without data in the destination sheet
+        var nextRow = destinationSheet.getLastRow() + 1;
 
-      // Paste tab names into the destination sheet
-      for (var j = 0; j < sheetNames.length; j++) {
-        var tabNames = spreadsheet.getSheetByName(sheetNames[j]).getSheetValues(1, 1, 1, spreadsheet.getSheetByName(sheetNames[j]).getLastColumn())[0];
-        destinationSheet.getRange(nextRow + j, 2).setValue(tabNames.join(', '));
+        // Paste sheet names into the destination sheet
+        destinationSheet.getRange(nextRow, 1, sheetNames.length, 1).setValues(sheetNames.map(function(name) {
+          return [name];
+        }));
+
+        // Paste tab names into the destination sheet
+        for (var j = 0; j < sheetNames.length; j++) {
+          var tabNames = spreadsheet.getSheetByName(sheetNames[j]).getSheetValues(1, 1, 1, spreadsheet.getSheetByName(sheetNames[j]).getLastColumn())[0];
+          destinationSheet.getRange(nextRow + j, 2).setValue(tabNames.join(', '));
+        }
       }
     }
   } catch (error) {
     Logger.log('Error: ' + error.toString());
   }
 }
+
