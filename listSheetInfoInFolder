@@ -19,15 +19,14 @@ function listSheetNamesInFolder() {
   destinationSheet.getRange(1, 1).setValue('Sheet Name');
   destinationSheet.getRange(1, 2).setValue('Tab Name');
 
-  // Get all files in the specified folder using Drive API
-  var files = Drive.Files.list({
-    q: "'" + folderId + "' in parents and mimeType='application/vnd.google-apps.spreadsheet'",
-  }).items;
+  // Get all files in the specified folder using DriveApp service
+  var folder = DriveApp.getFolderById(folderId);
+  var files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
 
   // Loop through each file
-  for (var i = 0; i < files.length; i++) {
-    var file = files[i];
-    var spreadsheet = SpreadsheetApp.openById(file.id);
+  while (files.hasNext()) {
+    var file = files.next();
+    var spreadsheet = SpreadsheetApp.openById(file.getId());
 
     // Get all sheet names in the current spreadsheet
     var sheetNames = spreadsheet.getSheets().map(function(sheet) {
