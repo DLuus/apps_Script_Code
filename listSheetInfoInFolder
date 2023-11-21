@@ -24,6 +24,9 @@ function listSheetNamesInFolder() {
     var folder = DriveApp.getFoldersByName(folderName).next();
     var files = folder.getFiles();
 
+    // Initialize an array to store data to be written to the destination sheet
+    var dataToWrite = [];
+
     // Loop through each file
     while (files.hasNext()) {
       var file = files.next();
@@ -34,23 +37,26 @@ function listSheetNamesInFolder() {
         return sheet.getName();
       });
 
-      // Get the first row without data in the destination sheet
-      var nextRow = destinationSheet.getLastRow() + 1;
+      // Repeat the spreadsheet name for each corresponding sheet name
+      var spreadsheetName = file.getName();
+      var repeatedSpreadsheetNames = Array(sheetNames.length).fill(spreadsheetName);
 
-      // Log information for troubleshooting
+      // Combine the repeated spreadsheet names with sheet names
+      var combinedData = repeatedSpreadsheetNames.map(function (spreadsheetName, index) {
+        return [spreadsheetName, sheetNames[index]];
+      });
+
+      // Add the combined data to the array
+      dataToWrite = dataToWrite.concat(combinedData);
+
       Logger.log('Processing file: %s', file.getName());
       Logger.log('Sheet names: %s', sheetNames.join(', '));
-
-      // Paste spreadsheet name into the destination sheet
-      destinationSheet.getRange(nextRow, 1).setValue(file.getName());
-
-      // Paste sheet names into the destination sheet
-      destinationSheet.getRange(nextRow, 2, sheetNames.length, 1).setValues(sheetNames.map(function(name) {
-        return [name];
-      }));
-
-      Logger.log('Data successfully written to the destination sheet.');
     }
+
+    // Write the data to the destination sheet
+    destinationSheet.getRange(2, 1, dataToWrite.length, dataToWrite[0].length).setValues(dataToWrite);
+
+    Logger.log('Data successfully written to the destination sheet.');
   } catch (error) {
     Logger.log('Error: ' + error.toString());
   }
