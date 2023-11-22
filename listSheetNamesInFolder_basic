@@ -1,0 +1,47 @@
+function listSheetNamesInFolder() {
+  // Replace 'FOLDER_NAME' with the name of the folder you want to scan
+  var folderName = 'FOLDER_NAME';
+
+  // Replace 'DESTINATION_SHEET_URL' with the URL of the sheet where you want to paste the information
+  var destinationSheetUrl = 'DESTINATION_SHEET_URL';
+
+  // Replace 'DESTINATION_TAB_NAME' with the name of the tab where you want to paste the information
+  var destinationTabName = 'DESTINATION_TAB_NAME';
+
+  // Get the destination sheet by URL
+  var destinationSpreadsheet = SpreadsheetApp.openByUrl(destinationSheetUrl);
+  var destinationSheet = destinationSpreadsheet.getSheetByName(destinationTabName);
+
+  // Clear existing data in the destination sheet
+  destinationSheet.clear();
+
+  // Set the header in the destination sheet
+  destinationSheet.getRange(1, 1).setValue('Spreadsheet Name');
+
+  try {
+    // Get all files in the root of Google Drive using DriveApp service
+    var folder = DriveApp.getFoldersByName(folderName).next();
+    var files = folder.getFiles();
+
+    // Initialize an array to store data to be written to the destination sheet
+    var dataToWrite = [];
+
+    // Loop through each file
+    while (files.hasNext()) {
+      var file = files.next();
+      var spreadsheetName = file.getName();
+
+      // Add the file name to the array
+      dataToWrite.push([spreadsheetName]);
+
+      Logger.log('Processing file: %s', spreadsheetName);
+    }
+
+    // Write the data to the destination sheet
+    destinationSheet.getRange(2, 1, dataToWrite.length, 1).setValues(dataToWrite);
+
+    Logger.log('Data successfully written to the destination sheet.');
+  } catch (error) {
+    Logger.log('Error: ' + error.toString());
+  }
+}
