@@ -22,9 +22,8 @@ function EXTRACT_UNIQUE_SUBPARTS(rangeValues) {
         });
 
         // Combine unique subparts
-        for (var j = 0; j < values.length; j++) {
-          uniqueSubparts[values[j]] = true;
-        }
+        var uniqueKey = values.join("-");
+        uniqueSubparts[uniqueKey] = true;
       }
     }
 
@@ -39,4 +38,3 @@ function EXTRACT_UNIQUE_SUBPARTS(rangeValues) {
     return [["Error: " + error.message]];
   }
 }
-
