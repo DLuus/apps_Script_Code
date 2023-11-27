@@ -18,12 +18,11 @@ function EXTRACT_UNIQUE_SUBPARTS(rangeValues) {
       if (rangeValues[i][0]) {
         var values = rangeValues[i][0].split("-");
         values = values.map(function (val) {
-          return val.trim();
+          return val.trim().toUpperCase();
         });
 
         // Combine unique subparts
-        var uniqueKey = values.join("-");
-        uniqueSubparts[uniqueKey] = true;
+        uniqueSubparts[values.join("-")] = true;
       }
     }
 
