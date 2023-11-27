@@ -24,14 +24,14 @@ function EXTRACT_UNIQUE_SUBPARTS(rangeValues) {
         });
 
         // Combine unique subparts
-        uniqueSubparts[values.join("-").toUpperCase()] = true;
+        uniqueSubparts[values.join("-")] = values.join("-");
       }
     }
 
     // Convert unique subparts to a 2D array
     var resultArray = [];
     for (var subpart in uniqueSubparts) {
-      resultArray.push([subpart]);
+      resultArray.push([uniqueSubparts[subpart]]);
     }
 
     return resultArray;
