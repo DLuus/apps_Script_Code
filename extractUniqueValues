@@ -18,7 +18,7 @@ function EXTRACT_UNIQUE_SUBPARTS(rangeValues) {
       if (rangeValues[i][0]) {
         var values = rangeValues[i][0].split("-");
         values = values.map(function (val) {
-          return val.trim().toLowerCase();
+          return val.trim();
         });
 
         // Combine unique subparts
