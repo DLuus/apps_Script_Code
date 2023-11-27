@@ -1,20 +1,32 @@
 /**
- * Custom function to extract unique values from a cell content.
+ * Custom function to extract unique values from a range of cells.
  *
- * @param {string} cellContent - The content of the cell to process.
+ * @param {string[][]} rangeValues - The values from the range to process.
  * @return {string} - The unique values joined by a specified delimiter.
  * @customfunction
  */
-function EXTRACT_UNIQUE(cellContent) {
+function EXTRACT_UNIQUE_VALUES(rangeValues) {
   try {
-    if (!cellContent) {
+    if (!rangeValues || rangeValues.length === 0) {
       throw new Error("Invalid parameter");
     }
 
-    var values = cellContent.split("-");
-    var uniqueValues = Array.from(new Set(values.map(function(val) {
-      return val.trim().toLowerCase();
-    })));
+    var uniqueValues = [];
+
+    // Iterate through each row in the range
+    for (var i = 0; i < rangeValues.length; i++) {
+      if (rangeValues[i][0]) {
+        var values = rangeValues[i][0].split("-");
+        values = values.map(function(val) {
+          return val.trim().toLowerCase();
+        });
+
+        // Combine unique values
+        uniqueValues = uniqueValues.concat(values.filter(function(val) {
+          return uniqueValues.indexOf(val) === -1;
+        }));
+      }
+    }
 
     return uniqueValues.join("-");
   } catch (error) {
@@ -23,8 +35,4 @@ function EXTRACT_UNIQUE(cellContent) {
 }
 
 
-To use this function in your Google Sheet, enter the following formula in a cell:
-
-=EXTRACT_UNIQUE(A1)
-
-Replace A1 with the reference to the cell containing your data. The function should then provide you with a string of unique values separated by hyphens.
+//Now, you can use the EXTRACT_UNIQUE_VALUES custom function in your Google Sheet. For example, if your data is in the range A1:A16000, you would enter the following formula in another cell (e.g., B1): =EXTRACT_UNIQUE_VALUES(A1:A16000)
