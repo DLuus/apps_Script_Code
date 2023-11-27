@@ -1,15 +1,30 @@
-function extractUniqueValues(input) {
-  var values = input.split("-");
-  var uniqueValues = [];
-  var seenValues = {};
-
-  for (var i = 0; i < values.length; i++) {
-    var value = values[i].trim().toLowerCase();
-    if (!seenValues[value]) {
-      uniqueValues.push(value);
-      seenValues[value] = true;
+/**
+ * Custom function to extract unique values from a cell content.
+ *
+ * @param {string} cellContent - The content of the cell to process.
+ * @return {string} - The unique values joined by a specified delimiter.
+ * @customfunction
+ */
+function EXTRACT_UNIQUE(cellContent) {
+  try {
+    if (!cellContent) {
+      throw new Error("Invalid parameter");
     }
-  }
 
-  return uniqueValues.join("-");
+    var values = cellContent.split("-");
+    var uniqueValues = Array.from(new Set(values.map(function(val) {
+      return val.trim().toLowerCase();
+    })));
+
+    return uniqueValues.join("-");
+  } catch (error) {
+    return "Error: " + error.message;
+  }
 }
+
+
+To use this function in your Google Sheet, enter the following formula in a cell:
+
+=EXTRACT_UNIQUE(A1)
+
+Replace A1 with the reference to the cell containing your data. The function should then provide you with a string of unique values separated by hyphens.
