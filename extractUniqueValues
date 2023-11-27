@@ -1,43 +1,24 @@
 /**
- * Custom function to extract unique subparts between hyphens from a range of cells.
+ * Custom function to extract unique values from a cell content.
  *
- * @param {string[][]} rangeValues - The values from the range to process.
- * @return {string[][]} - The unique subparts in a 2D array.
+ * @param {string} cellContent - The content of the cell to process.
+ * @return {string} - The unique values joined by a specified delimiter.
  * @customfunction
  */
-function EXTRACT_UNIQUE_SUBPARTS(rangeValues) {
+function EXTRACT_UNIQUE(cellContent) {
   try {
-    if (!rangeValues || rangeValues.length === 0) {
+    if (!cellContent) {
       throw new Error("Invalid parameter");
     }
 
-    var uniqueSubparts = {};
+    var values = cellContent.split("-");
+    var uniqueValues = Array.from(new Set(values.map(function(val) {
+      return val.trim().toLowerCase();
+    })));
 
-    // Iterate through each row in the range
-    for (var i = 0; i < rangeValues.length; i++) {
-      if (rangeValues[i][0]) {
-        var values = rangeValues[i][0].split("-");
-
-        // Trim and convert to uppercase
-        values = values.map(function (val) {
-          return val.trim().toUpperCase();
-        });
-
-        // Combine unique subparts
-        uniqueSubparts[values.join("-")] = values.join("-");
-      }
-    }
-
-    // Convert unique subparts to a 2D array
-    var resultArray = [];
-    for (var subpart in uniqueSubparts) {
-      resultArray.push([uniqueSubparts[subpart]]);
-    }
-
-    return resultArray;
+    return uniqueValues.join("-");
   } catch (error) {
-    return [["Error: " + error.message]];
+    return "Error: " + error.message;
   }
 }
 
-// For example: "=EXTRACT_UNIQUE_SUBPARTS(A1:A16000)"
