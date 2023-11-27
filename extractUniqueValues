@@ -1,17 +1,17 @@
 /**
- * Custom function to extract unique values from a range of cells.
+ * Custom function to extract unique subparts between hyphens from a range of cells.
  *
  * @param {string[][]} rangeValues - The values from the range to process.
- * @return {string[][]} - The unique values in a 2D array.
+ * @return {string[][]} - The unique subparts in a 2D array.
  * @customfunction
  */
-function EXTRACT_UNIQUE_VALUES(rangeValues) {
+function EXTRACT_UNIQUE_SUBPARTS(rangeValues) {
   try {
     if (!rangeValues || rangeValues.length === 0) {
       throw new Error("Invalid parameter");
     }
 
-    var uniqueValues = [];
+    var uniqueSubparts = {};
 
     // Iterate through each row in the range
     for (var i = 0; i < rangeValues.length; i++) {
@@ -21,17 +21,22 @@ function EXTRACT_UNIQUE_VALUES(rangeValues) {
           return val.trim().toLowerCase();
         });
 
-        // Combine unique values
+        // Combine unique subparts
         for (var j = 0; j < values.length; j++) {
-          if (uniqueValues.indexOf(values[j]) === -1) {
-            uniqueValues.push([values[j]]);
-          }
+          uniqueSubparts[values[j]] = true;
         }
       }
     }
 
-    return uniqueValues;
+    // Convert unique subparts to a 2D array
+    var resultArray = [];
+    for (var subpart in uniqueSubparts) {
+      resultArray.push([subpart]);
+    }
+
+    return resultArray;
   } catch (error) {
     return [["Error: " + error.message]];
   }
 }
+
