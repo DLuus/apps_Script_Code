@@ -2,7 +2,7 @@
  * Custom function to extract unique values from a range of cells.
  *
  * @param {string[][]} rangeValues - The values from the range to process.
- * @return {string} - The unique values joined by a specified delimiter.
+ * @return {string[][]} - The unique values in a 2D array.
  * @customfunction
  */
 function EXTRACT_UNIQUE_VALUES(rangeValues) {
@@ -17,7 +17,7 @@ function EXTRACT_UNIQUE_VALUES(rangeValues) {
     for (var i = 0; i < rangeValues.length; i++) {
       if (rangeValues[i][0]) {
         var values = rangeValues[i][0].split("-");
-        values = values.map(function(val) {
+        values = values.map(function (val) {
           return val.trim().toLowerCase();
         });
 
@@ -30,8 +30,13 @@ function EXTRACT_UNIQUE_VALUES(rangeValues) {
       }
     }
 
-    return uniqueValues.join("-");
+    // Convert unique values to a 2D array
+    var resultArray = uniqueValues.map(function (val) {
+      return [val];
+    });
+
+    return resultArray;
   } catch (error) {
-    return "Error: " + error.message;
+    return [["Error: " + error.message]];
   }
 }
