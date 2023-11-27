@@ -1,0 +1,15 @@
+function extractUniqueValues(input) {
+  var values = input.split("-");
+  var uniqueValues = [];
+  var seenValues = {};
+
+  for (var i = 0; i < values.length; i++) {
+    var value = values[i].trim().toLowerCase();
+    if (!seenValues[value]) {
+      uniqueValues.push(value);
+      seenValues[value] = true;
+    }
+  }
+
+  return uniqueValues.join("-");
+}
