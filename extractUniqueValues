@@ -2,7 +2,7 @@
  * Custom function to extract unique values from a range of cells.
  *
  * @param {string[][]} rangeValues - The values from the range to process.
- * @return {string} - The unique values joined by a specified delimiter.
+ * @return {string[][]} - The unique values in a 2D array.
  * @customfunction
  */
 function EXTRACT_UNIQUE_VALUES(rangeValues) {
@@ -28,11 +28,15 @@ function EXTRACT_UNIQUE_VALUES(rangeValues) {
       }
     }
 
-    return uniqueValues.join("-");
+    // Convert to a 2D array
+    var resultArray = uniqueValues.map(function(val) {
+      return [val];
+    });
+
+    return resultArray;
   } catch (error) {
-    return "Error: " + error.message;
+    return [["Error: " + error.message]];
   }
 }
-
 
 //Now, you can use the EXTRACT_UNIQUE_VALUES custom function in your Google Sheet. For example, if your data is in the range A1:A16000, you would enter the following formula in another cell (e.g., B1): =EXTRACT_UNIQUE_VALUES(A1:A16000)
