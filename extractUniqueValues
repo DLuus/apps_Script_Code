@@ -17,6 +17,8 @@ function EXTRACT_UNIQUE_SUBPARTS(rangeValues) {
     for (var i = 0; i < rangeValues.length; i++) {
       if (rangeValues[i][0]) {
         var values = rangeValues[i][0].split("-");
+        
+        // Trim and convert to uppercase
         values = values.map(function (val) {
           return val.trim().toUpperCase();
         });
