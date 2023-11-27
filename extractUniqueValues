@@ -38,3 +38,6 @@ function EXTRACT_UNIQUE_SUBPARTS(rangeValues) {
     return [["Error: " + error.message]];
   }
 }
+
+//Now, when you use the formula in your Google Sheet:
+// For example: "=EXTRACT_UNIQUE_SUBPARTS(A1:A16000)"
