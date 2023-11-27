@@ -24,18 +24,13 @@ function EXTRACT_UNIQUE_VALUES(rangeValues) {
         // Combine unique values
         for (var j = 0; j < values.length; j++) {
           if (uniqueValues.indexOf(values[j]) === -1) {
-            uniqueValues.push(values[j]);
+            uniqueValues.push([values[j]]);
           }
         }
       }
     }
 
-    // Convert unique values to a 2D array
-    var resultArray = uniqueValues.map(function (val) {
-      return [val];
-    });
-
-    return resultArray;
+    return uniqueValues;
   } catch (error) {
     return [["Error: " + error.message]];
   }
