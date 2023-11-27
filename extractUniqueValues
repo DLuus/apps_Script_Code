@@ -1,35 +1,35 @@
 /**
- * Custom function to extract unique values from a range of cells.
+ * Custom function to extract unique subparts between hyphens from a range of cells.
  *
  * @param {string[][]} rangeValues - The values from the range to process.
- * @return {string[][]} - The unique values in a 2D array.
+ * @return {string[][]} - The unique subparts in a 2D array.
  * @customfunction
  */
-function EXTRACT_UNIQUE_VALUES(rangeValues) {
+function EXTRACT_UNIQUE_SUBPARTS(rangeValues) {
   try {
     if (!rangeValues || rangeValues.length === 0) {
       throw new Error("Invalid parameter");
     }
 
-    var uniqueValues = [];
+    var uniqueSubparts = {};
 
     // Iterate through each row in the range
     for (var i = 0; i < rangeValues.length; i++) {
       if (rangeValues[i][0]) {
         var values = rangeValues[i][0].split("-");
-        values = values.map(function(val) {
+        values = values.map(function (val) {
           return val.trim().toLowerCase();
         });
 
-        // Combine unique values
-        uniqueValues = uniqueValues.concat(values.filter(function(val) {
-          return uniqueValues.indexOf(val) === -1;
-        }));
+        // Combine unique subparts
+        for (var j = 0; j < values.length; j++) {
+          uniqueSubparts[values[j]] = true;
+        }
       }
     }
 
-    // Convert to a 2D array
-    var resultArray = uniqueValues.map(function(val) {
+    // Convert unique subparts to a 2D array
+    var resultArray = Object.keys(uniqueSubparts).map(function (val) {
       return [val];
     });
 
@@ -38,5 +38,3 @@ function EXTRACT_UNIQUE_VALUES(rangeValues) {
     return [["Error: " + error.message]];
   }
 }
-
-//Now, you can use the EXTRACT_UNIQUE_VALUES custom function in your Google Sheet. For example, if your data is in the range A1:A16000, you would enter the following formula in another cell (e.g., B1): =EXTRACT_UNIQUE_VALUES(A1:A16000)
