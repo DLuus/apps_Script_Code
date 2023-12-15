@@ -1,0 +1,10 @@
+function timestamp (sheetUrl,batch){
+
+  let spreadSheet = SpreadsheetApp.openByUrl(sheetUrl);
+  let ssTargetTab = spreadSheet.getSheetByName(batch);
+
+  ssTargetTab.getRange('A3:A').setValue(new Date(Date.now() - 86400000));// TIMESTAMP
+
+  Logger.log('Imbedding current date and time ----> Timestamp ----> '+ batch)
+
+}
