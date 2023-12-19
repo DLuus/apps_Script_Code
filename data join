@@ -1,0 +1,50 @@
+function quarterlyDataJoin() {
+  // Replace 'YOUR_SPREADSHEET_URL' with the URL of your Google Sheet
+  var spreadsheet = SpreadsheetApp.openByUrl('');
+
+  // Replace 'SOURCE_SHEET_NAME' with the name of the source sheet
+  var sourceSheetName = '';
+  var sourceSheet = spreadsheet.getSheetByName(sourceSheetName);
+
+  // Replace 'DESTINATION_SHEET_NAME' with the name of the destination sheet
+  var destinationSheetName = '';
+  var destinationSheet = spreadsheet.getSheetByName(destinationSheetName);
+
+  if (!sourceSheet || !destinationSheet) {
+    Logger.log('Source or destination sheet not found.');
+    return;
+  }
+
+  // Define the columns to copy by their names
+  var columnsToCopy = [
+    'realGdpPerCapita_date_quarter', // Replace with the name of the first column to copy
+    'realGdp_quarterOverQuarterChange', // Replace with the name of the second column to copy
+    'realGdpPerCapita_quarterOverQuarterChange',  // Replace with the name of the third column to copy
+    'realGdp_yearOverYearChange',  // Replace with the name of the third column to copy
+    'realGdpPerCapita_yearOverYearChange'  // Replace with the name of the third column to copy
+  ];
+
+  // Define the columns to paste into by their numbers (1-based index)
+  var columnsToPasteInto = [1, 2, 3, 4, 5]; // Replace with the column numbers where you want to paste
+
+  // Loop through the columns to copy
+  for (var i = 0; i < columnsToCopy.length; i++) {
+    var columnName = columnsToCopy[i];
+    var columnNumber = columnsToPasteInto[i];
+    
+    // Find the column to copy by name
+    var columnToCopy = sourceSheet.getRange(1, 1, sourceSheet.getLastRow(), sourceSheet.getLastColumn()).createTextFinder(columnName).findAll()[0].getColumn();
+    
+    // Get the data from the source column
+    var dataToCopy = sourceSheet.getRange(1, columnToCopy, sourceSheet.getLastRow() - 1, 1).getValues();
+    
+    // Check the number of rows in the data to copy
+    var numRowsToCopy = dataToCopy.length;
+    
+    // Paste the data into the destination column by number
+    destinationSheet.getRange(1, columnNumber, numRowsToCopy, 1).setValues(dataToCopy);
+  }
+  
+  Logger.log(quarterlyDataJoin)
+  Logger.log('Columns copied and pasted.');
+}
