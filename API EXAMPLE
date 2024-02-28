@@ -1,0 +1,41 @@
+function realGdp() {
+  // Replace the API URL with the actual URL of your API endpoint
+  var apiUrl = 'SECRET!';
+
+  // Make an API GET request to fetch the JSON data
+  var response = UrlFetchApp.fetch(apiUrl);
+  var json = response.getContentText();
+  var data = JSON.parse(json);
+
+  // Replace 'YOUR_SPREADSHEET_URL' with the URL of your Google Sheet
+  var spreadSheet = SpreadsheetApp.openByUrl('SPREADSHEET URL');
+  var sheet = spreadSheet.getSheetByName('SHEET NAME'); // Replace with your target sheet name
+
+  // Assuming the JSON contains an array of objects
+  var dataArray = data.data;
+
+  // Clear existing data (optional)
+  sheet.clear();
+
+  // Add headers to the sheet
+  var headers = ['realGdp_date_qaurter', 'realGdp_usd_billion','realGdp_quarterOverQuarterChange','realGdp_yearOverYearChange']; // Customize these headers as needed
+  sheet.appendRow(headers);
+  
+  // Create a loop counter
+  var loopCounter = 0;
+
+  // Loop through the JSON data and paste it into the Google Sheet
+  for (var i = 0; i < dataArray.length && loopCounter < 101 ; i++) {
+    var row = [];
+    row.push(dataArray[i].date);
+    row.push(dataArray[i].value);
+    sheet.appendRow(row);
+  
+  loopCounter++;
+
+  }
+
+  Logger.log(realGdp)
+  
+  quarterlyData_quarterOverQaurterPerecentage_calculator(sheet);
+  quarterlyData_yearOverYearPerecentage_calculator(sheet);
