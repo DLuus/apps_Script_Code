@@ -1,0 +1,38 @@
+function financialApiV1 (sheetUrl,batch,ticker_batchControl,dynamicRow1,dynamicRow2,dynamicRow3,dynamicRow4,dynamicRow5) {
+
+  let spreadSheet_batchControls = SpreadsheetApp.openByUrl(sheetUrl);
+  let ssTargetTab_batchControls = spreadSheet_batchControls.getSheetByName('Batch control');
+  
+  var companyTicker = ssTargetTab_batchControls.getRange(ticker_batchControl).getValue();
+
+  var apiKey = ':)';
+  var endPoint = ':)'
+
+  var headers = {
+    'X-RapidAPI-Host': '',
+    'X-RapidAPI-Key': apiKey
+  }
+
+  var options = {
+    'Method': 'GET',
+    headers
+  }
+
+  var url = endPoint + '/stock/v2/get-financials?symbol='+companyTicker+'&region=US'
+  try{var results = UrlFetchApp.fetch(url, options)} catch (error){Logger.log(error)}
+  try{var resultsCode = results.getResponseCode();} catch (error){Logger.log(error)}
+
+  Logger.log('API status:' + resultsCode + '!' + '  ---->  ' + companyTicker + ' financial report')
+
+  try{var json = results.getContentText();}catch (error){error}
+
+  try{ var financialData_companySymbol = JSON.parse(json).symbol} catch (error){ Logger.log("COMPANY SYMBOL DISABLED FOR THE ABOVE FINANCIAL REPORT!")}
+ 
+  let spreadSheet = SpreadsheetApp.openByUrl(sheetUrl);
+  let ssTargetTab = spreadSheet.getSheetByName(batch);
+
+  ssTargetTab.getRange("B"+dynamicRow1).setValue(financialData_companySymbol);
+
+}
+
+// FINANCIAL API SCRIPT END ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
